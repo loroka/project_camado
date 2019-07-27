@@ -1,6 +1,6 @@
 import pygame
 from player import Player
-
+from keyboard_controller import *
 
 def main():
     pygame.init()
@@ -17,10 +17,16 @@ def main():
 
     quit_flag = False
     while not quit_flag:
+        key_state = {}
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 quit_flag = True
-        
+            if event.type == pygame.KEYUP:
+                process_keys_up(key_state, event)
+            if event.type == pygame.KEYDOWN:
+                process_keys_down(key_state, event)
+              
+
 
         all_sprites_list.draw(window)
 
