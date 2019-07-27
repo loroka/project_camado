@@ -10,7 +10,7 @@ def main():
  
     clock=pygame.time.Clock()
 
-    player = Player(100, 10, (100, 100, 0), (255, 255, 255))
+    player = Player(100, 20, -20, (100, 100, 0), (255, 255, 255))
 
     all_sprites_list = pygame.sprite.Group()
     all_sprites_list.add(player)
@@ -23,16 +23,19 @@ def main():
                 quit_flag = True
             if event.type == pygame.KEYUP:
                 process_keys_up(key_state, event)
+                player.key_update(key_state)
             if event.type == pygame.KEYDOWN:
                 process_keys_down(key_state, event)
+                player.key_update(key_state)
               
-
 
         all_sprites_list.draw(window)
 
 
         all_sprites_list.update()
-        pygame.display.flip()
+        pygame.display.update()
+        window.fill((0,0,0))
+        #pygame.display.flip()
         clock.tick(60)
         
     pygame.quit()
