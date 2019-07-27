@@ -16,8 +16,8 @@ def main():
     all_sprites_list.add(player)
 
     quit_flag = False
+    key_state = {'up': False, 'left': False, 'right': False, 'down': False}
     while not quit_flag:
-        key_state = {}
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
                 quit_flag = True
@@ -29,6 +29,7 @@ def main():
 
 
         all_sprites_list.draw(window)
+
 
         all_sprites_list.update()
         pygame.display.flip()
