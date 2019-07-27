@@ -1,0 +1,3 @@
+*.pyc
+*.loc
+**/__pycache__/**
