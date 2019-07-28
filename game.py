@@ -10,7 +10,8 @@ def main():
  
     clock=pygame.time.Clock()
 
-    player = Player(100, 20, -20, (100, 100, 0), (255, 255, 255))
+    player = Player(max_health=100, max_speed=10, min_speed=-10, 
+                    position=(300, 500, 0), color=(255, 255, 255))
 
     all_sprites_list = pygame.sprite.Group()
     all_sprites_list.add(player)

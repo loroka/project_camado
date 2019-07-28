@@ -11,11 +11,14 @@ class Player(pygame.sprite.Sprite):
         self._position = position
         self._acceleration = 0.5
         self._deacceleration = 3.0
+        self.rotation = 0
+        self.rotation_speed = 1
+        self.direction = pygame.Vector2((0, 1))
 
         x, y, z = position
 
         self.original_image = pygame.image.load("assets/Car.png")
-        self.original_image = pygame.transform.scale(self.original_image, (64, 64))
+        self.original_image = pygame.transform.scale(self.original_image, (48, 48))
         self.original_image.set_colorkey((0,0,0))
         self.image = self.original_image
         self.image.set_colorkey((0,0,0))
@@ -30,9 +33,8 @@ class Player(pygame.sprite.Sprite):
         self.up = False
         self.down = False
 
-        self.last_update = 0
+        self.last_speed_update = 0
         self.last_rot_update = 0
-        self.rotation = 0
 
     def update(self):
         """
@@ -56,7 +58,7 @@ class Player(pygame.sprite.Sprite):
         Updates player position proportional to speed
         """ 
         now = pygame.time.get_ticks()
-        if now - self.last_update > self._max_speed - self._speed:
+        if now - self.last_speed_update > self._max_speed - self._speed:
         
             if self.down: # backward
                 self._speed += self._acceleration
@@ -75,26 +77,42 @@ class Player(pygame.sprite.Sprite):
                     self._speed -= self._deacceleration
                     if self._speed < 0:
                         self._speed = 0
+                
+            self.last_speed_update = now
+
+        if self.left:
+            self.rotate(True)
+
+            pass
+        if self.right:
+            self.rotate(False)
+            pass
                     
-            self.last_update = now
-        self.rect.y += self._speed
+        self.rect.x += self._speed * self.direction.x
+        self.rect.y += self._speed * self.direction.y
             
-    def rotate(self, angle):
+    def rotate(self, direction):
         """
         Rotates player by angle
         :param angle: int
         """
         now = pygame.time.get_ticks()
-        if now - self.last_rot_update > 50:
-            self.last_update = now
+        if now - self.last_rot_update > self.rotation_speed:
+            self.last_rot_update = now
+
+            if direction: # left
+                angle = 3
+            else: # right
+                angle = -3
+
             self.rotation = (self.rotation + angle) % 360
+            self.direction = self.direction.rotate(-angle)
             new_image = pygame.transform.rotate(self.original_image, self.rotation)
             old_center = self.rect.center
             self.image = new_image
             self.rect = self.image.get_rect()
             self.rect.center = old_center
 
-        self.last_rot_update = 0
 
 
 
