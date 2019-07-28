@@ -1,33 +1,24 @@
 import pygame
 from weapon import Weapon
+from car import Car
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, max_health, max_speed, min_speed, position, color):
+class Player(pygame.sprite.Group):
+    def __init__(self, position):
         super().__init__()
-        self._max_health = max_health
-        self._health = max_health
-        self._max_speed = max_speed
-        self._min_speed = min_speed
-        self._speed = 0
+        
         self._position = position
-        self._acceleration = 0.5
-        self._deacceleration = 3.0
-        self.rotation = 0
-        self.rotation_speed = 1
+
         self.direction = pygame.Vector2((0, 1))
 
         x, y, z = position
 
-        self.original_image = pygame.image.load("assets/Car.png")
-        self.original_image = pygame.transform.scale(self.original_image, (48, 48))
-        self.original_image.set_colorkey((0,0,0))
-        self.image = self.original_image
-        self.image.set_colorkey((0,0,0))
+        self._car = Car(max_health=100, max_speed=10, min_speed=-10)
+        self.add(self._car)
 
-        self.rect = self.image.get_rect()
+        self._weapon = Weapon(self._car.rect.center)
+        self.add(self._weapon)
 
-        self.rect.x = x
-        self.rect.y = y
+        self.move_by(pygame.Vector2(x,y))
 
         self.left = False
         self.right = False
@@ -35,9 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.down = False
 
         self.last_speed_update = 0
-        self.last_rot_update = 0
 
-        self.weapon = Weapon(self.rect.center)
 
     def update(self):
         """
@@ -45,6 +34,7 @@ class Player(pygame.sprite.Sprite):
         """
         super().update()
         self._position_update()
+        self._rotation_update()
 
     def key_update(self,key_state):
         """
@@ -61,62 +51,57 @@ class Player(pygame.sprite.Sprite):
         Updates player position proportional to speed
         """ 
         now = pygame.time.get_ticks()
-        if now - self.last_speed_update > self._max_speed - self._speed:
+        if now - self.last_speed_update > self._car._max_speed - self._car.speed:
         
             if self.down: # backward
-                self._speed += self._acceleration
-                if self._speed > self._max_speed:
-                    self._speed = self._max_speed
+                self._car.speed += self._car._acceleration
+                if self._car.speed > self._car._max_speed:
+                    self._car.speed = self._car._max_speed
             elif self.up: # forward
-                self._speed -= self._acceleration 
-                if self._speed < self._min_speed:
-                    self._speed = self._min_speed
+                self._car.speed -= self._car._acceleration 
+                if self._car.speed < self._car._min_speed:
+                    self._car.speed = self._car._min_speed
             else: # breaking with no button pushed
-                if self._speed < 0:
-                    self._speed += self._deacceleration
-                    if self._speed > 0:
-                        self._speed = 0
-                elif self._speed > 0:
-                    self._speed -= self._deacceleration
-                    if self._speed < 0:
-                        self._speed = 0
+                if self._car.speed < 0:
+                    self._car.speed += self._car._deacceleration
+                    if self._car.speed > 0:
+                        self._car.speed = 0
+                elif self._car.speed > 0:
+                    self._car.speed -= self._car._deacceleration
+                    if self._car.speed < 0:
+                        self._car.speed = 0
                 
             self.last_speed_update = now
-
-        if self.left:
-            self.rotate(True)
-
-            pass
-        if self.right:
-            self.rotate(False)
-            pass
-                    
-        self.rect.x += self._speed * self.direction.x
-        self.rect.y += self._speed * self.direction.y
+  
+        if self._car.speed != 0:
+            self.move_by(self.direction * self._car.speed)
             
-    def rotate(self, direction):
+    def _rotation_update(self):
         """
-        Rotates player by angle
-        :param angle: int
+        Checks if key is pressed, if so rotates all sprites
         """
-        now = pygame.time.get_ticks()
-        if now - self.last_rot_update > self.rotation_speed:
-            self.last_rot_update = now
+        if self.left:
+            angle = self._car.steering_strenght
+        elif self.right:
+            angle = -self._car.steering_strenght
+        else:
+            return
 
-            if direction: # left
-                angle = 3
-            else: # right
-                angle = -3
+        self.direction = self.direction.rotate(-angle)
 
-            self.rotation = (self.rotation + angle) % 360
-            self.direction = self.direction.rotate(-angle)
-            new_image = pygame.transform.rotate(self.original_image, self.rotation)
-            old_center = self.rect.center
-            self.image = new_image
-            self.rect = self.image.get_rect()
-            self.rect.center = old_center
+        for sprite in self.sprites():
+            sprite.rotate(angle)
 
-
+    def move_by(self, position):
+        """
+        Moves all sprites by given position
+        """
+        for sprite in self.sprites():
+            sprite.move_by(position)
+        
+        # fix gun in middle of car, weapon is shifted a bit
+        # during rotation
+        self._weapon.rect.center = self._car.rect.center 
 
 
         
