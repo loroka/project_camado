@@ -35,7 +35,6 @@ def main():
         all_sprites_list.update()
         pygame.display.update()
         window.fill((0,0,0))
-        #pygame.display.flip()
         clock.tick(60)
         
     pygame.quit()

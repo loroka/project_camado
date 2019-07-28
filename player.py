@@ -13,10 +13,15 @@ class Player(pygame.sprite.Sprite):
         self._deacceleration = 3.0
 
         x, y, z = position
-        self.image = pygame.Surface([40, 20])
-        self.image.fill(color)
-        pygame.draw.rect(self.image, color, [0, 0, 40, 20])
+
+        self.original_image = pygame.image.load("assets/Car.png")
+        self.original_image = pygame.transform.scale(self.original_image, (64, 64))
+        self.original_image.set_colorkey((0,0,0))
+        self.image = self.original_image
+        self.image.set_colorkey((0,0,0))
+
         self.rect = self.image.get_rect()
+
         self.rect.x = x
         self.rect.y = y
 
@@ -26,34 +31,42 @@ class Player(pygame.sprite.Sprite):
         self.down = False
 
         self.last_update = 0
+        self.last_rot_update = 0
+        self.rotation = 0
 
     def update(self):
+        """
+        Updates player every tick
+        """
         super().update()
         self._position_update()
 
-    
-    
     def key_update(self,key_state):
-       self.up = key_state.get('up')
-       self.down = key_state.get('down')
-       self.left = key_state.get('left')
-       self.right = key_state.get('right')
-    
+        """
+        Update current keystate
+        :param key_state: dict containing key states
+        """ 
+        self.up = key_state.get('up')
+        self.down = key_state.get('down')
+        self.left = key_state.get('left')
+        self.right = key_state.get('right')
     
     def _position_update(self):
-        
+        """
+        Updates player position proportional to speed
+        """ 
         now = pygame.time.get_ticks()
         if now - self.last_update > self._max_speed - self._speed:
         
-            if self.right:
+            if self.down: # backward
                 self._speed += self._acceleration
                 if self._speed > self._max_speed:
                     self._speed = self._max_speed
-            elif self.left:
+            elif self.up: # forward
                 self._speed -= self._acceleration 
                 if self._speed < self._min_speed:
                     self._speed = self._min_speed
-            else:
+            else: # breaking with no button pushed
                 if self._speed < 0:
                     self._speed += self._deacceleration
                     if self._speed > 0:
@@ -62,12 +75,28 @@ class Player(pygame.sprite.Sprite):
                     self._speed -= self._deacceleration
                     if self._speed < 0:
                         self._speed = 0
-                else:
-                    pass
+                    
             self.last_update = now
-        self.rect.x += self._speed
+        self.rect.y += self._speed
             
-        
+    def rotate(self, angle):
+        """
+        Rotates player by angle
+        :param angle: int
+        """
+        now = pygame.time.get_ticks()
+        if now - self.last_rot_update > 50:
+            self.last_update = now
+            self.rotation = (self.rotation + angle) % 360
+            new_image = pygame.transform.rotate(self.original_image, self.rotation)
+            old_center = self.rect.center
+            self.image = new_image
+            self.rect = self.image.get_rect()
+            self.rect.center = old_center
+
+        self.last_rot_update = 0
+
+
 
         
 
