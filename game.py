@@ -1,6 +1,7 @@
 import pygame
 from player import Player
 from keyboard_controller import *
+from weapon import Weapon
 
 def main():
     pygame.init()
@@ -12,9 +13,11 @@ def main():
 
     player = Player(max_health=100, max_speed=10, min_speed=-10, 
                     position=(300, 500, 0), color=(255, 255, 255))
+    
 
     all_sprites_list = pygame.sprite.Group()
     all_sprites_list.add(player)
+    all_sprites_list.add(player.weapon)
 
     quit_flag = False
     key_state = {'up': False, 'left': False, 'right': False, 'down': False}

@@ -1,4 +1,5 @@
 import pygame
+from weapon import Weapon
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, max_health, max_speed, min_speed, position, color):
@@ -35,6 +36,8 @@ class Player(pygame.sprite.Sprite):
 
         self.last_speed_update = 0
         self.last_rot_update = 0
+
+        self.weapon = Weapon(self.rect.center)
 
     def update(self):
         """
