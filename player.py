@@ -28,24 +28,20 @@ class Player(pygame.sprite.Group):
         self.last_speed_update = 0
 
 
-    def update(self):
+    def update(self, key_state):
         """
-        Updates player every tick
+        Updates player states every tick
         """
         super().update()
         self._position_update()
         self._rotation_update()
 
-    def key_update(self,key_state):
-        """
-        Update current keystate
-        :param key_state: dict containing key states
-        """ 
         self.up = key_state.get('up')
         self.down = key_state.get('down')
         self.left = key_state.get('left')
         self.right = key_state.get('right')
-    
+
+   
     def _position_update(self):
         """
         Updates player position proportional to speed
@@ -75,6 +71,7 @@ class Player(pygame.sprite.Group):
   
         if self._car.speed != 0:
             self.move_by(self.direction * self._car.speed)
+           
             
     def _rotation_update(self):
         """
@@ -91,6 +88,7 @@ class Player(pygame.sprite.Group):
 
         for sprite in self.sprites():
             sprite.rotate(angle)
+
 
     def move_by(self, position):
         """

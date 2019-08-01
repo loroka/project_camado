@@ -19,14 +19,12 @@ def main():
             if event.type==pygame.QUIT:
                 quit_flag = True
             if event.type == pygame.KEYUP:
-                process_keys_up(key_state, event)
-                player.key_update(key_state)
+                check_keys(key_state, event, False)
             if event.type == pygame.KEYDOWN:
-                process_keys_down(key_state, event)
-                player.key_update(key_state)
+                check_keys(key_state, event, True)
               
         player.draw(window)
-        player.update()
+        player.update(key_state)
 
         pygame.display.update()
         window.fill((0,0,0))
