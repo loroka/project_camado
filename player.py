@@ -71,7 +71,8 @@ class Player(sprite.Group):
         infos.append(myfont.render(f"speed: {self._car.speed:.4f}", False, (255, 255, 255)))
         infos.append(myfont.render(f"velocity: {self._car.velocity}", False, (255, 255, 255)))
         infos.append(myfont.render(f"forward: {self._car.forward}", False, (255, 255, 255)))
-        
+        infos.append(myfont.render(f"w-front: {self._car.weight_front:.4f}", False, (255, 255, 255)))
+        infos.append(myfont.render(f"w-rear: {self._car.weight_rear:.4f}", False, (255, 255, 255)))
 
         for i, info in enumerate(infos):
             window.blit(info, (0,20 * i))
