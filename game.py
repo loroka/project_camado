@@ -5,7 +5,8 @@ from weapon import Weapon
 
 def main():
     pygame.init()
-
+    pygame.font.init()
+    
     window = pygame.display.set_mode((800,600))
 
     clock = pygame.time.Clock()
@@ -25,6 +26,7 @@ def main():
               
         player.draw(window)
         player.update(key_state)
+
 
         pygame.display.update()
         window.fill((0,0,0))
