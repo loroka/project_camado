@@ -65,3 +65,14 @@ class Player(sprite.Group):
         Updates player position proportional to speed
         """ 
         self._car.update()
+    
+    def draw(self, window):
+        super().draw(window)
+        
+        myfont = font.SysFont('Comic Sans MS', 15) 
+        infos = [] 
+        infos.append(myfont.render(f"velocity: {self._car.velocity}", False, (255, 255, 255))) 
+        infos.append(myfont.render(f"acceleration: {self._car.acceleration}", False, (255, 255, 255))) 
+
+        for i, info in enumerate(infos): 
+            window.blit(info, (0,20 * i)) 
